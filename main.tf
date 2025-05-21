@@ -49,14 +49,15 @@ resource "aws_s3_object" "index_html" {
   content_type = "text/html"
 }
 resource "aws_s3_object" "images" {
-  for_each = fileset(path.module, "**/*.jpg")
+  for_each = fileset(path.module, "images/*.jpg")
 
   bucket = aws_s3_bucket.site.bucket
   key    = each.value
   source = "${path.module}/${each.value}"
+  etag = filemd5("${path.module}/${each.value}")
 }
 output "fileset-results" {
-  value = fileset(path.module, "**/*.jpg")
+  value = fileset(path.module, "images/*.jpg")
 }
 
 
@@ -85,6 +86,15 @@ resource "aws_s3_bucket_website_configuration" "site" {
 
   index_document {
     suffix = "index.html"
+  }
+
+  routing_rule {
+    condition {
+      key_prefix_equals = "/"
+    }
+    redirect {
+      replace_key_prefix_with = "index.html"
+    }
   }
 }
 
