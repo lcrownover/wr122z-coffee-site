@@ -87,14 +87,5 @@ resource "aws_s3_bucket_website_configuration" "site" {
   index_document {
     suffix = "index.html"
   }
-
-  routing_rule {
-    condition {
-      key_prefix_equals = "/"
-    }
-    redirect {
-      replace_key_prefix_with = "index.html"
-    }
-  }
 }
 
